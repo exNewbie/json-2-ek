@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "$1" == "" ] ; then
+  echo "Please provide a name for Elastic Search container to link to"
+  echo "syntax: $0 [ES Container]"
+  exit 0
+fi
+
+if [ "$2" == "" ] ; then
+  echo "Please provide an index name"
+  echo "syntax: $0 $1 [Index Name]"
+  exit 0
+fi
+
+if [ "$3" == "" ] ; then
+  echo "Please provide a absolute path where logs are stored"
+  echo "syntax: $0 $1 $2 [Folder Path]"
+  exit 0
+fi
+
+docker run -d --name json-2-elk \
+-v `pwd`/import.py:/bin/import.py \
+-v $3:/mnt/ \
+--link $1:elasticsearch \
+-d python:latest \
+/bin/bash -c "pip install elasticsearch python-dateutil && /bin/import.py $2"
